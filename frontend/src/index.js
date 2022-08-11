@@ -1,16 +1,24 @@
 /** @format */
 
 import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './bootstrap.min.css'
-import './index.css'
-import App from './App'
+import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+
 import reportWebVitals from './reportWebVitals'
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
+import { store } from './app/store'
+import App from './App'
+import './bootstrap.min.css'
+import './index.css'
+
+const container = document.getElementById('root')
+const root = createRoot(container)
+
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 )
 
