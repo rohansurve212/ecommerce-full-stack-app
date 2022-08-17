@@ -58,10 +58,11 @@ export const addCartItem = createAsyncThunk(
 //Remove item from the cart
 export const removeCartItem = createAsyncThunk(
   'cart/removeItem',
-  async (cartInput, thunkAPI) => {
+  async (productId, thunkAPI) => {
     try {
       //const token = thunkAPI.getState().auth.user?.token
-      return await cartService.removeCartItem(cartInput)
+      const cartItems = thunkAPI.getState().cart.cartItems
+      return await cartService.removeCartItem(productId, cartItems)
     } catch (error) {
       const message =
         (error.response &&
@@ -114,7 +115,7 @@ export const cartSlice = createSlice({
       .addCase(removeCartItem.fulfilled, (state, action) => {
         state.isLoading = false
         state.isSuccess = true
-        state.cartItems.pop(action.payload)
+        state.cartItems = action.payload
       })
       .addCase(removeCartItem.rejected, (state, action) => {
         state.isLoading = false

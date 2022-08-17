@@ -11,7 +11,7 @@ import { getProductDetails } from '../features/products/productListSlice'
 import { addCartItem } from '../features/cart/cartSlice'
 
 const ProductScreen = () => {
-  const [quantity, setQuantity] = useState(0)
+  const [quantity, setQuantity] = useState(1)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -28,7 +28,7 @@ const ProductScreen = () => {
   const addToCartHandler = () => {
     const cartInput = {
       productId: id,
-      productQty: quantity === 0 ? 1 : quantity,
+      productQty: quantity,
     }
     dispatch(addCartItem(cartInput))
     navigate(`/cart/${cartInput.productId}?qty=${cartInput.productQty}`)

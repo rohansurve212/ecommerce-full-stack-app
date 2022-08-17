@@ -36,7 +36,17 @@ const addCartItem = async (cartInput, cartItems) => {
 }
 
 //Remove an item from cart
-const removeCartItem = async (cartInput) => {}
+const removeCartItem = async (productId, cartItems) => {
+  const existingItem = cartItems.find((x) => x.product === productId)
+
+  if (existingItem) {
+    cartItems = cartItems.filter((x) => x.product !== existingItem.product)
+  }
+
+  localStorage.setItem('cartItems', JSON.stringify(cartItems))
+
+  return cartItems
+}
 
 const cartService = {
   createCart,
