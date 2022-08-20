@@ -118,7 +118,6 @@ const ProfileScreen = () => {
               value={password}
               onChange={formDataChangeHandler}
               autoComplete='on'
-              required
             ></Form.Control>
           </Form.Group>
           <h2> </h2>
@@ -131,7 +130,6 @@ const ProfileScreen = () => {
               value={confirmPassword}
               onChange={formDataChangeHandler}
               autoComplete='on'
-              required
             ></Form.Control>
           </Form.Group>
           <h2> </h2>
