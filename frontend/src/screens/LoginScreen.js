@@ -7,7 +7,7 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
-import { login, reset } from '../features/auth/authSlice'
+import { login, reset } from '../features/user/userSlice'
 
 const LoginScreen = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ const LoginScreen = () => {
   const navigate = useNavigate()
 
   const { isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
+    (state) => state.user
   )
 
   useEffect(() => {

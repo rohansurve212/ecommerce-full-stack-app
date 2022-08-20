@@ -4,26 +4,19 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 
-import { logout } from '../features/auth/authSlice'
-import {
-  getUserProfile,
-  resetUserProfile,
-  reset,
-} from '../features/user/userSlice'
+import { logout, getUserProfile, reset } from '../features/user/userSlice'
 
 const Header = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { user } = useSelector((state) => state.auth)
+  const { user } = useSelector((state) => state.user)
 
   const getProfileHandler = () => {
     dispatch(getUserProfile())
-    dispatch(reset())
   }
 
   const logoutHandler = () => {
     dispatch(logout())
-    dispatch(resetUserProfile())
     dispatch(reset())
     navigate('/')
   }

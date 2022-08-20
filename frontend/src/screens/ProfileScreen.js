@@ -6,15 +6,10 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import {
-  updateUserProfile,
-  resetUserProfile,
-  reset,
-} from '../features/user/userSlice'
+import { updateUserProfile, reset } from '../features/user/userSlice'
 
 const ProfileScreen = () => {
-  const { user } = useSelector((state) => state.auth)
-  const { userProfile, isLoading, isSuccess, isError, message } = useSelector(
+  const { user, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.user
   )
 
@@ -29,20 +24,17 @@ const ProfileScreen = () => {
 
   const { name, email, password, confirmPassword, errorMessage } = formData
 
+  const [userUpdateIntended, setUserUpdateIntended] = useState(false)
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   useEffect(() => {
     if (!user) {
       navigate('/login')
-      dispatch(resetUserProfile())
       dispatch(reset())
     }
-
-    if (userProfile) {
-      dispatch(reset())
-    }
-  }, [user, userProfile, navigate, dispatch])
+  }, [user, navigate, dispatch])
 
   const formDataChangeHandler = (e) => {
     setFormData((prevState) => ({
@@ -54,6 +46,7 @@ const ProfileScreen = () => {
   const submitHandler = (e) => {
     e.preventDefault()
     dispatch(reset())
+    setUserUpdateIntended(true)
 
     if (password !== confirmPassword) {
       setFormData((prevState) => ({
@@ -68,7 +61,6 @@ const ProfileScreen = () => {
       }
 
       dispatch(updateUserProfile(updatedUserData))
-      dispatch(reset())
       setFormData({
         name: updatedUserData.name,
         email: updatedUserData.email,
@@ -89,7 +81,7 @@ const ProfileScreen = () => {
         <h2>User Profile</h2>
         {errorMessage && <Message variant='danger'>{errorMessage}</Message>}
         {isError && <Message variant='danger'>{message}</Message>}
-        {isSuccess && (
+        {userUpdateIntended && isSuccess && (
           <Message variant='success'>User Profile updated successfully</Message>
         )}
         <Form onSubmit={submitHandler}>

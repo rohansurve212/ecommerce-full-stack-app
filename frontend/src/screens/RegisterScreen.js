@@ -7,7 +7,7 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
-import { register, reset } from '../features/auth/authSlice'
+import { register, reset } from '../features/user/userSlice'
 
 const RegisterScreen = () => {
   const FORM_DATA_INITIAL_STATE = {
@@ -26,7 +26,7 @@ const RegisterScreen = () => {
   const navigate = useNavigate()
 
   const { isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
+    (state) => state.user
   )
 
   useEffect(() => {
@@ -57,7 +57,6 @@ const RegisterScreen = () => {
         name,
         email,
         password,
-        confirmPassword,
       }
 
       dispatch(register(userData))

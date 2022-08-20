@@ -75,6 +75,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      token: generateToken(user._id),
     })
   } else {
     res.status(404)
@@ -102,6 +103,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
+      token: generateToken(updatedUser._id),
     })
   } else {
     res.status(404)
