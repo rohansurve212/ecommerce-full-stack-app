@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 
 import { logout, getUserProfile, reset } from '../features/user/userSlice'
+import { emptyCart, removeShippingAddress } from '../features/cart/cartSlice'
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -17,6 +18,8 @@ const Header = () => {
 
   const logoutHandler = () => {
     dispatch(logout())
+    dispatch(emptyCart())
+    dispatch(removeShippingAddress())
     dispatch(reset())
     navigate('/')
   }

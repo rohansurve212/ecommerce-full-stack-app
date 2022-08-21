@@ -9,6 +9,7 @@ import { addCartItem, removeCartItem } from '../features/cart/cartSlice'
 const CartScreen = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { user } = useSelector((state) => state.user)
   const { cartItems } = useSelector((state) => state.cart)
 
   const addToCartHandler = (e, item) => {
@@ -24,8 +25,11 @@ const CartScreen = () => {
   }
 
   const checkoutHandler = () => {
-    console.log('checkout')
-    navigate(`/login?redirect=shipping`)
+    if (user) {
+      navigate('/shipping')
+    } else {
+      navigate('/login')
+    }
   }
 
   return (

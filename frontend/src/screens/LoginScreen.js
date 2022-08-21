@@ -23,13 +23,19 @@ const LoginScreen = () => {
   const { isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.user
   )
+  const { cartItems } = useSelector((state) => state.cart)
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && cartItems.length > 0) {
+      navigate('/shipping')
+      dispatch(reset())
+    }
+
+    if (isSuccess && cartItems.length === 0) {
       navigate('/')
       dispatch(reset())
     }
-  }, [isSuccess, navigate, dispatch])
+  }, [cartItems, isSuccess, navigate, dispatch])
 
   const formDataChangeHandler = (e) => {
     setFormData((prevState) => ({

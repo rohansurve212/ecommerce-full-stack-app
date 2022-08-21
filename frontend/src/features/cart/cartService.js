@@ -4,9 +4,6 @@ import axios from 'axios'
 
 const API_URL = '/api/products'
 
-//Create new shopping cart
-const createCart = async (cartInput) => {}
-
 //Add an item to cart
 const addCartItem = async (cartInput, cartItems) => {
   const { data } = await axios.get(`${API_URL}/${cartInput.productId}`)
@@ -48,10 +45,37 @@ const removeCartItem = async (productId, cartItems) => {
   return cartItems
 }
 
+//Empty Shopping Cart
+const emptyCart = async () => {
+  localStorage.removeItem('cartItems')
+}
+
+//Save shipping Address
+const saveShippingAddress = async (addressData) => {
+  localStorage.setItem('shippingAddress', JSON.stringify(addressData))
+
+  return addressData
+}
+
+//Remove shipping Address
+const removeShippingAddress = async () => {
+  localStorage.removeItem('shippingAddress')
+}
+
+//Save shipping Address
+const savePaymentMethod = async (paymentMethod) => {
+  localStorage.setItem('paymentMethod', JSON.stringify(paymentMethod))
+
+  return paymentMethod
+}
+
 const cartService = {
-  createCart,
   addCartItem,
   removeCartItem,
+  emptyCart,
+  saveShippingAddress,
+  removeShippingAddress,
+  savePaymentMethod,
 }
 
 export default cartService

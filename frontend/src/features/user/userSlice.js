@@ -66,7 +66,6 @@ export const getUserProfile = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = thunkAPI.getState().user.user.token
-      console.log(token)
       return await userService.getUserProfile(token)
     } catch (error) {
       const message =
@@ -86,7 +85,6 @@ export const updateUserProfile = createAsyncThunk(
   async (updatedUserData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().user.user.token
-      console.log(token)
       return await userService.updateUserProfile(updatedUserData, token)
     } catch (error) {
       const message =
