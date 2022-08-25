@@ -33,9 +33,28 @@ const getOrderDetails = async (orderId, token) => {
   return response.data
 }
 
+//Update order to paid
+const updateOrderToPaid = async (paymentData, token) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const response = await axios.put(
+    `${ORDER_API_URL}/${paymentData.orderId}/pay`,
+    paymentData.paymentResult,
+    config
+  )
+
+  return response.data
+}
+
 const orderService = {
   createOrder,
   getOrderDetails,
+  updateOrderToPaid,
 }
 
 export default orderService

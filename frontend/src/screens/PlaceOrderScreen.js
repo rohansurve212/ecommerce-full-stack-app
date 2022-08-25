@@ -7,7 +7,7 @@ import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import CheckoutSteps from '../components/CheckoutSteps'
-import { createOrder, reset } from '../features/order/orderSlice'
+import { createOrder } from '../features/order/orderSlice'
 
 const PlaceOrderScreen = () => {
   const dispatch = useDispatch()
@@ -36,11 +36,9 @@ const PlaceOrderScreen = () => {
     if (isSuccess) {
       navigate(`/order/${order._id}`)
     }
-    // eslint-disable-next-line
   }, [isSuccess, navigate, order])
 
   const placeOrderHandler = () => {
-    dispatch(reset())
     dispatch(
       createOrder({
         orderItems: cart.cartItems,

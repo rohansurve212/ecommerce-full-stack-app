@@ -31,7 +31,7 @@ export const createOrder = createAsyncThunk(
   }
 )
 
-//Create a new order
+//Get Order details
 export const getOrderDetails = createAsyncThunk(
   'order/getOrderDetails',
   async (orderId, thunkAPI) => {
@@ -50,12 +50,31 @@ export const getOrderDetails = createAsyncThunk(
   }
 )
 
+//Update Order to paid
+export const updateOrderToPaid = createAsyncThunk(
+  'order/updateOrderToPaid',
+  async (paymentData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().user.user.token
+      return await orderService.updateOrderToPaid(paymentData, token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
     reset: (state) => {
-      state.isLoading = false
+      state.isLoading = true
       state.isSuccess = false
       state.isError = false
       state.message = ''
@@ -82,7 +101,6 @@ const orderSlice = createSlice({
       })
       .addCase(getOrderDetails.fulfilled, (state, action) => {
         state.isLoading = false
-        state.isSuccess = true
         state.order = action.payload
       })
       .addCase(getOrderDetails.rejected, (state, action) => {
@@ -90,6 +108,18 @@ const orderSlice = createSlice({
         state.isError = true
         state.message = action.payload
         state.order = {}
+      })
+      .addCase(updateOrderToPaid.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updateOrderToPaid.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.order = action.payload
+      })
+      .addCase(updateOrderToPaid.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
       })
   },
 })

@@ -1,40 +1,77 @@
 /** @format */
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { PayPalButton } from 'react-paypal-button-v2'
+import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
 
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getOrderDetails, reset } from '../features/order/orderSlice'
+import {
+  getOrderDetails,
+  updateOrderToPaid,
+  reset,
+} from '../features/order/orderSlice'
+import { store } from '../app/store'
 
 const OrderScreen = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
   const { id } = useParams()
   const orderId = id
 
-  const { order, isLoading, isError, message } = useSelector(
+  const customerName = store.getState().user.user.name
+  const customerEmail = store.getState().user.user.email
+
+  const { order, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.order
   )
 
-  console.log(order)
+  const [sdkReady, setSdkReady] = useState(false)
 
   useEffect(() => {
-    dispatch(reset())
     dispatch(getOrderDetails(orderId))
   }, [dispatch, orderId])
 
-  if (isLoading) {
-    return <Loader />
+  useEffect(() => {
+    const addPayPalScript = async () => {
+      const { data: clientId } = await axios.get('/api/config/paypal')
+      const script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`
+      script.async = true
+      script.onload = () => {
+        setSdkReady(true)
+      }
+      document.body.appendChild(script)
+    }
+
+    if (isSuccess) {
+      dispatch(reset())
+      dispatch(getOrderDetails(orderId))
+    } else if (!order.isPaid) {
+      if (!window.paypal) {
+        addPayPalScript()
+      } else {
+        setSdkReady(true)
+      }
+    }
+  }, [dispatch, orderId, isSuccess, order.isPaid])
+
+  const paymentSuccessHandler = (paymentResult) => {
+    const paymentData = {
+      orderId,
+      paymentResult,
+    }
+    dispatch(updateOrderToPaid(paymentData))
   }
 
-  if (isError) {
-    ;<Message variant='danger'>{message}</Message>
-  }
-
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : isError ? (
+    <Message variant='danger'>{message}</Message>
+  ) : (
     <>
       <h1>Order {orderId}</h1>
       <Row>
@@ -43,11 +80,11 @@ const OrderScreen = () => {
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
-                <strong>Name: </strong> {order.user.name}
+                <strong>Name: </strong> {customerName}
               </p>
               <p>
                 <strong>Email: </strong>
-                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+                <a href={`mailto:${customerEmail}`}>{customerEmail}</a>
               </p>
               <p>
                 <strong>Address: </strong>
@@ -70,7 +107,7 @@ const OrderScreen = () => {
                 <strong>Method: </strong>
                 {order.paymentMethod}
               </p>
-              {order.isPaid ? (
+              {order?.isPaid ? (
                 <Message variant='success'>Paid on {order.paidAt}</Message>
               ) : (
                 <Message variant='danger'>Not Paid</Message>
@@ -141,6 +178,19 @@ const OrderScreen = () => {
                   <Col>$ {order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
+              {!order.isPaid && (
+                <ListGroup.Item>
+                  {isLoading && <Loader />}
+                  {!sdkReady ? (
+                    <Loader />
+                  ) : (
+                    <PayPalButton
+                      amount={order.totalPrice}
+                      onSuccess={paymentSuccessHandler}
+                    />
+                  )}
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>
