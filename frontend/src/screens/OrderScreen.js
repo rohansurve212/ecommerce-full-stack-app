@@ -31,6 +31,7 @@ const OrderScreen = () => {
   const [sdkReady, setSdkReady] = useState(false)
 
   useEffect(() => {
+    console.log('HELLO')
     dispatch(getOrderDetails(orderId))
   }, [dispatch, orderId])
 
@@ -88,9 +89,10 @@ const OrderScreen = () => {
               </p>
               <p>
                 <strong>Address: </strong>
-                {order.shippingAddress.streetAddress},{' '}
-                {order.shippingAddress.city} {order.shippingAddress.postalCode},{' '}
-                {order.shippingAddress.country}
+                {order.shippingAddress?.streetAddress},{' '}
+                {order.shippingAddress?.city}{' '}
+                {order.shippingAddress?.postalCode},{' '}
+                {order.shippingAddress?.country}
               </p>
               {order.isDelivered ? (
                 <Message variant='success'>
@@ -116,11 +118,11 @@ const OrderScreen = () => {
 
             <ListGroup.Item>
               <h2>Order Items</h2>
-              {order.orderItems.length === 0 ? (
+              {order.orderItems?.length === 0 ? (
                 <Message>Order is empty</Message>
               ) : (
                 <ListGroup variant='flush'>
-                  {order.orderItems.map((item, index) => (
+                  {order.orderItems?.map((item, index) => (
                     <ListGroup.Item key={index}>
                       <Row>
                         <Col md={1}>

@@ -39,6 +39,25 @@ const Header = () => {
                   <i className='fas fa-shopping-cart'></i> Cart
                 </Nav.Link>
               </LinkContainer>
+              {user?.isAdmin && (
+                <NavDropdown title='portal settings' id='adminMenu'>
+                  <LinkContainer to='/admin/userlist'>
+                    <NavDropdown.Item onClick={() => {}}>
+                      Users
+                    </NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/admin/productlist'>
+                    <NavDropdown.Item onClick={() => {}}>
+                      Products
+                    </NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/admin/orderlist'>
+                    <NavDropdown.Item onClick={() => {}}>
+                      Orders
+                    </NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
+              )}
               {user ? (
                 <NavDropdown title={user.name} id='username'>
                   <LinkContainer to='/profile'>
