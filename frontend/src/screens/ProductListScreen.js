@@ -8,6 +8,7 @@ import { Table, Button, Row, Col } from 'react-bootstrap'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listProducts } from '../features/products/productListSlice'
+import { deleteProduct } from '../features/adminRights/adminRightsSlice'
 
 const ProductListScreen = () => {
   const dispatch = useDispatch()
@@ -16,6 +17,12 @@ const ProductListScreen = () => {
   const { products, isLoading, isError, message } = useSelector(
     (state) => state.productList
   )
+
+  const {
+    isLoading: deleteProductLoading,
+    isError: deleteProductError,
+    message: deleteProductMessage,
+  } = useSelector((state) => state.adminRights)
 
   const { user: loggedInUser } = useSelector((state) => state.user)
 
@@ -29,11 +36,11 @@ const ProductListScreen = () => {
 
   const createProductHandler = () => {}
 
-  const deleteUserHandler = (userId) => {
+  const deleteProductHandler = (productId) => {
     if (window.confirm('Are you sure?')) {
-      //dispatch(deleteUser(userId))
-      //dispatch(getAllUsers())
-      //window.location.reload()
+      dispatch(deleteProduct(productId))
+      dispatch(listProducts())
+      window.location.reload()
     }
   }
 
@@ -49,10 +56,10 @@ const ProductListScreen = () => {
           </Button>
         </Col>
       </Row>
-      {isLoading ? (
+      {isLoading || deleteProductLoading ? (
         <Loader />
-      ) : isError ? (
-        <Message variant='danger'>{message}</Message>
+      ) : isError || deleteProductError ? (
+        <Message variant='danger'>{message || deleteProductMessage}</Message>
       ) : (
         <Table striped bordered hover responsive className='table-sm'>
           <thead>
@@ -60,6 +67,7 @@ const ProductListScreen = () => {
               <th>ID</th>
               <th>NAME</th>
               <th>PRICE</th>
+              <th>IN STOCK</th>
               <th>CATEGORY</th>
               <th>BRAND</th>
               <th></th>
@@ -71,6 +79,7 @@ const ProductListScreen = () => {
                 <td>{product._id}</td>
                 <td>{product.name}</td>
                 <td>$ {product.price}</td>
+                <td>{product.countInStock}</td>
                 <td>{product.category}</td>
                 <td>{product.brand}</td>
                 <td>
@@ -82,7 +91,7 @@ const ProductListScreen = () => {
                   <Button
                     variant='danger'
                     className='btn-sm'
-                    onClick={() => deleteUserHandler(product._id)}
+                    onClick={() => deleteProductHandler(product._id)}
                   >
                     <i className='fas fa-trash'></i>
                   </Button>

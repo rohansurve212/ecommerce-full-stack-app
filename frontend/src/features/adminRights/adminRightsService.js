@@ -3,6 +3,9 @@
 import axios from 'axios'
 
 const USERS_API_URL = '/api/users'
+const PRODUCTS_API_URL = '/api/products'
+
+//---------------------* User-related API Endpoints *----------------------------
 
 //Get all users
 const getAllUsers = async (token) => {
@@ -65,11 +68,31 @@ const updateUserById = async (updatedUserData, token) => {
   return response.data
 }
 
+//---------------------* Product-related API Endpoints *----------------------------
+
+//Delete a product
+const deleteProduct = async (productId, token) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const response = await axios.delete(
+    `${PRODUCTS_API_URL}/${productId}`,
+    config
+  )
+
+  return response.data.message
+}
+
 const adminRightsService = {
   getAllUsers,
   deleteUser,
   getUserById,
   updateUserById,
+  deleteProduct,
 }
 
 export default adminRightsService
