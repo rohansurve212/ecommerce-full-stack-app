@@ -11,6 +11,7 @@ import { listProducts } from '../features/products/productListSlice'
 import {
   deleteProduct,
   createProduct,
+  createProductReset,
 } from '../features/adminRights/adminRightsSlice'
 
 const ProductListScreen = () => {
@@ -25,8 +26,9 @@ const ProductListScreen = () => {
     useSelector((state) => state.adminRights)
 
   const {
-    product: createdProduct,
+    createdProduct,
     createProductLoading,
+    createProductSuccess,
     createProductError,
     createProductMessage,
   } = useSelector((state) => state.adminRights)
@@ -34,16 +36,21 @@ const ProductListScreen = () => {
   const { user: loggedInUser } = useSelector((state) => state.user)
 
   useEffect(() => {
+    dispatch(createProductReset())
     !loggedInUser
       ? navigate('/login')
       : loggedInUser.isAdmin
       ? dispatch(listProducts())
       : navigate('/')
-  }, [dispatch, navigate, loggedInUser])
+
+    if (createProductSuccess) {
+      navigate(`/admin/product/${createdProduct._id}/edit`)
+    }
+  }, [dispatch, navigate, loggedInUser, createdProduct, createProductSuccess])
 
   const createProductHandler = () => {
     dispatch(createProduct())
-    navigate(`/admin/product/${createdProduct._id}/edit`)
+    //window.location.reload()
   }
 
   const deleteProductHandler = (productId) => {

@@ -103,7 +103,28 @@ const createProduct = async (token) => {
 
 //Update a product
 const updateProduct = async (updatedProductData, token) => {
-  const reqBody = updatedProductData
+  const {
+    _id,
+    name,
+    price,
+    description,
+    image,
+    countInStock,
+    brand,
+    category,
+  } = updatedProductData
+
+  const reqBody = {
+    _id,
+    name,
+    price: parseFloat(price),
+    description,
+    image,
+    countInStock: parseInt(countInStock),
+    brand,
+    category,
+  }
+
   const config = {
     headers: {
       'Content-Type': 'application/json',

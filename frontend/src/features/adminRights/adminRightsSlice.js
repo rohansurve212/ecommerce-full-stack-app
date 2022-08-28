@@ -7,13 +7,13 @@ import adminRightsService from './adminRightsService'
 const initialState = {
   users: [],
   user: {},
-  product: {},
   isLoading: false,
   isError: false,
   message: '',
   deleteProductLoading: false,
   deleteProductError: false,
   deleteProductMessage: '',
+  createdProduct: { reviews: [] },
   createProductLoading: false,
   createProductSuccess: false,
   createProductError: false,
@@ -241,7 +241,7 @@ export const adminRightsSlice = createSlice({
       .addCase(createProduct.fulfilled, (state, action) => {
         state.createProductLoading = false
         state.createProductSuccess = true
-        state.product = action.payload
+        state.createdProduct = action.payload
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.createProductLoading = false
