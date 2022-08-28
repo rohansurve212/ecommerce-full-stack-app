@@ -8,7 +8,10 @@ import { Table, Button, Row, Col } from 'react-bootstrap'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { listProducts } from '../features/products/productListSlice'
-import { deleteProduct } from '../features/adminRights/adminRightsSlice'
+import {
+  deleteProduct,
+  createProduct,
+} from '../features/adminRights/adminRightsSlice'
 
 const ProductListScreen = () => {
   const dispatch = useDispatch()
@@ -18,10 +21,14 @@ const ProductListScreen = () => {
     (state) => state.productList
   )
 
+  const { deleteProductLoading, deleteProductError, deleteProductMessage } =
+    useSelector((state) => state.adminRights)
+
   const {
-    isLoading: deleteProductLoading,
-    isError: deleteProductError,
-    message: deleteProductMessage,
+    product: createdProduct,
+    createProductLoading,
+    createProductError,
+    createProductMessage,
   } = useSelector((state) => state.adminRights)
 
   const { user: loggedInUser } = useSelector((state) => state.user)
@@ -34,7 +41,10 @@ const ProductListScreen = () => {
       : navigate('/')
   }, [dispatch, navigate, loggedInUser])
 
-  const createProductHandler = () => {}
+  const createProductHandler = () => {
+    dispatch(createProduct())
+    navigate(`/admin/product/${createdProduct._id}/edit`)
+  }
 
   const deleteProductHandler = (productId) => {
     if (window.confirm('Are you sure?')) {
@@ -56,10 +66,17 @@ const ProductListScreen = () => {
           </Button>
         </Col>
       </Row>
-      {isLoading || deleteProductLoading ? (
+      {(deleteProductLoading || createProductLoading || isLoading) && (
         <Loader />
-      ) : isError || deleteProductError ? (
-        <Message variant='danger'>{message || deleteProductMessage}</Message>
+      )}
+      {(deleteProductError && (
+        <Message variant='danger'>{deleteProductMessage}</Message>
+      )) ||
+        (createProductError && (
+          <Message variant='danger'>{createProductMessage}</Message>
+        ))}
+      {isError ? (
+        <Message variant='danger'>{message}</Message>
       ) : (
         <Table striped bordered hover responsive className='table-sm'>
           <thead>

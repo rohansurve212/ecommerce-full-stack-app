@@ -7,9 +7,17 @@ import adminRightsService from './adminRightsService'
 const initialState = {
   users: [],
   user: {},
+  product: {},
   isLoading: false,
   isError: false,
   message: '',
+  deleteProductLoading: false,
+  deleteProductError: false,
+  deleteProductMessage: '',
+  createProductLoading: false,
+  createProductSuccess: false,
+  createProductError: false,
+  createProductMessage: '',
 }
 
 //---------------------* User-related Thunk Functions *----------------------------
@@ -92,7 +100,7 @@ export const updateUserById = createAsyncThunk(
 
 //---------------------* Product-related Thunk Functions *----------------------------
 
-//Delete a user
+//Delete a product
 export const deleteProduct = createAsyncThunk(
   'adminRights/deleteProduct',
   async (productId, thunkAPI) => {
@@ -111,15 +119,58 @@ export const deleteProduct = createAsyncThunk(
   }
 )
 
+//Create a product
+export const createProduct = createAsyncThunk(
+  'adminRights/createProduct',
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().user.user.token
+      return await adminRightsService.createProduct(token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+//Update a product
+export const updateProduct = createAsyncThunk(
+  'adminRights/updateProduct',
+  async (updatedProductData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().user.user.token
+      return await adminRightsService.updateProduct(updatedProductData, token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 export const adminRightsSlice = createSlice({
   name: 'adminRights',
   initialState,
   reducers: {
-    reset: (state) => {
-      state.isLoading = false
-      state.deleteUserSuccess = false
-      state.isError = false
-      state.message = ''
+    deleteProductReset: (state) => {
+      state.deleteProductLoading = false
+      state.deleteProductError = false
+      state.deleteProductMessage = ''
+    },
+    createProductReset: (state) => {
+      state.createProductLoading = false
+      state.createProductSuccess = false
+      state.createProductError = false
+      state.createProductMessage = ''
     },
   },
   extraReducers: (builder) => {
@@ -173,13 +224,38 @@ export const adminRightsSlice = createSlice({
         state.message = action.payload
       })
       .addCase(deleteProduct.pending, (state) => {
-        state.isLoading = true
+        state.deleteProductLoading = true
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.message = action.payload
+        state.deleteProductLoading = false
+        state.deleteProductMessage = action.payload
       })
       .addCase(deleteProduct.rejected, (state, action) => {
+        state.deleteProductLoading = false
+        state.isError = true
+        state.deleteProductMessage = action.payload
+      })
+      .addCase(createProduct.pending, (state) => {
+        state.createProductLoading = true
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.createProductLoading = false
+        state.createProductSuccess = true
+        state.product = action.payload
+      })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.createProductLoading = false
+        state.createProductError = true
+        state.createProductMessage = action.payload
+      })
+      .addCase(updateProduct.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.product = action.payload
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload
@@ -187,5 +263,6 @@ export const adminRightsSlice = createSlice({
   },
 })
 
-export const { reset } = adminRightsSlice.actions
+export const { deleteProductReset, createProductReset } =
+  adminRightsSlice.actions
 export default adminRightsSlice.reducer

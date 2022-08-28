@@ -87,12 +87,47 @@ const deleteProduct = async (productId, token) => {
   return response.data.message
 }
 
+//Create a product
+const createProduct = async (token) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const response = await axios.post(`${PRODUCTS_API_URL}`, {}, config)
+
+  return response.data
+}
+
+//Update a product
+const updateProduct = async (updatedProductData, token) => {
+  const reqBody = updatedProductData
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const response = await axios.put(
+    `${PRODUCTS_API_URL}/${reqBody._id}`,
+    reqBody,
+    config
+  )
+
+  return response.data
+}
+
 const adminRightsService = {
   getAllUsers,
   deleteUser,
   getUserById,
   updateUserById,
   deleteProduct,
+  createProduct,
+  updateProduct,
 }
 
 export default adminRightsService
