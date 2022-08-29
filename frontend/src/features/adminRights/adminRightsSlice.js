@@ -7,6 +7,7 @@ import adminRightsService from './adminRightsService'
 const initialState = {
   users: [],
   user: {},
+  orders: [],
   isLoading: false,
   isError: false,
   message: '',
@@ -18,6 +19,14 @@ const initialState = {
   createProductSuccess: false,
   createProductError: false,
   createProductMessage: '',
+  getAllOrdersLoading: false,
+  getAllOrdersSuccess: false,
+  getAllOrdersError: false,
+  getAllOrdersMessage: '',
+  updateOrderToDeliveredLoading: false,
+  updateOrderToDeliveredSuccess: false,
+  updateOrderToDeliveredError: false,
+  updateOrderToDeliveredMessage: '',
 }
 
 //---------------------* User-related Thunk Functions *----------------------------
@@ -157,6 +166,48 @@ export const updateProduct = createAsyncThunk(
   }
 )
 
+//---------------------* Order-related Thunk Functions *----------------------------
+
+//Get all orders
+export const getAllOrders = createAsyncThunk(
+  'adminRights/getAllOrders',
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().user.user.token
+      return await adminRightsService.getAllOrders(token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+//Update Order to delivered
+export const updateOrderToDelivered = createAsyncThunk(
+  'adminRights/updateOrderToDelivered',
+  async (orderId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().user.user.token
+      return await adminRightsService.updateOrderToDelivered(orderId, token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+//------------------------------* Create Slice *-----------------------------------
+
 export const adminRightsSlice = createSlice({
   name: 'adminRights',
   initialState,
@@ -171,6 +222,12 @@ export const adminRightsSlice = createSlice({
       state.createProductSuccess = false
       state.createProductError = false
       state.createProductMessage = ''
+    },
+    updateOrderToDeliveredReset: (state) => {
+      state.updateOrderToDeliveredLoading = false
+      state.updateOrderToDeliveredSuccess = false
+      state.updateOrderToDeliveredError = false
+      state.updateOrderToDeliveredMessage = ''
     },
   },
   extraReducers: (builder) => {
@@ -260,9 +317,36 @@ export const adminRightsSlice = createSlice({
         state.isError = true
         state.message = action.payload
       })
+      .addCase(getAllOrders.pending, (state) => {
+        state.getAllOrdersLoading = true
+      })
+      .addCase(getAllOrders.fulfilled, (state, action) => {
+        state.getAllOrdersLoading = false
+        state.orders = action.payload
+      })
+      .addCase(getAllOrders.rejected, (state, action) => {
+        state.getAllOrdersLoading = false
+        state.getAllOrdersError = true
+        state.getAllOrdersMessage = action.payload
+      })
+      .addCase(updateOrderToDelivered.pending, (state) => {
+        state.updateOrderToDeliveredLoading = true
+      })
+      .addCase(updateOrderToDelivered.fulfilled, (state, action) => {
+        state.updateOrderToDeliveredLoading = false
+        state.order = action.payload
+      })
+      .addCase(updateOrderToDelivered.rejected, (state, action) => {
+        state.updateOrderToDeliveredLoading = false
+        state.updateOrderToDeliveredError = true
+        state.updateOrderToDeliveredMessage = action.payload
+      })
   },
 })
 
-export const { deleteProductReset, createProductReset } =
-  adminRightsSlice.actions
+export const {
+  deleteProductReset,
+  createProductReset,
+  updateOrderToDeliveredReset,
+} = adminRightsSlice.actions
 export default adminRightsSlice.reducer

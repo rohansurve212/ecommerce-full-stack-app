@@ -1,5 +1,5 @@
 /** @format */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Form, Button, Col } from 'react-bootstrap'
@@ -16,9 +16,11 @@ const PaymentScreen = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  if (!shippingAddress) {
-    navigate('/shipping')
-  }
+  useEffect(() => {
+    if (!shippingAddress) {
+      navigate('/shipping')
+    }
+  }, [navigate, shippingAddress])
 
   const paymentMethodChangeHandler = (e) => {
     setPaymentMethod(e.target.value)

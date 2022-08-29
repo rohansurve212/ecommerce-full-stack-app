@@ -91,7 +91,7 @@ const ShippingScreen = () => {
           ></Form.Control>
         </Form.Group>
         <h2> </h2>
-        <Button type='submit' variant='primary'>
+        <Button type='submit' className='btn btn-block' variant='primary'>
           Continue
         </Button>
       </Form>

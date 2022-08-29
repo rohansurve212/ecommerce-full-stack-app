@@ -10,6 +10,10 @@ const initialState = {
   isSuccess: false,
   isError: false,
   message: '',
+  updateOrderToPaidLoading: false,
+  updateOrderToPaidSuccess: false,
+  updateOrderToPaidError: false,
+  updateOrderToPaidMessage: '',
 }
 
 //Create a new order
@@ -79,6 +83,12 @@ const orderSlice = createSlice({
       state.isError = false
       state.message = ''
     },
+    updateOrderToPaidReset: (state) => {
+      state.updateOrderToPaidLoading = true
+      state.updateOrderToPaidSuccess = false
+      state.updateOrderToPaidError = false
+      state.updateOrderToPaidMessage = ''
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -110,19 +120,19 @@ const orderSlice = createSlice({
         state.order = {}
       })
       .addCase(updateOrderToPaid.pending, (state) => {
-        state.isLoading = true
+        state.updateOrderToPaidLoading = true
       })
       .addCase(updateOrderToPaid.fulfilled, (state, action) => {
-        state.isLoading = false
+        state.updateOrderToPaidLoading = false
         state.order = action.payload
       })
       .addCase(updateOrderToPaid.rejected, (state, action) => {
-        state.isLoading = false
-        state.isError = true
-        state.message = action.payload
+        state.updateOrderToPaidLoading = false
+        state.updateOrderToPaidError = true
+        state.updateOrderToPaidMessage = action.payload
       })
   },
 })
 
-export const { reset } = orderSlice.actions
+export const { reset, updateOrderToPaidReset } = orderSlice.actions
 export default orderSlice.reducer

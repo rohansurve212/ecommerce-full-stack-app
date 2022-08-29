@@ -4,15 +4,16 @@ import { PayPalButton } from 'react-paypal-button-v2'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
-import { Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
+import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
 
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import {
   getOrderDetails,
   updateOrderToPaid,
-  reset,
+  updateOrderToPaidReset,
 } from '../features/order/orderSlice'
+import { updateOrderToDelivered } from '../features/adminRights/adminRightsSlice'
 import { store } from '../app/store'
 
 const OrderScreen = () => {
@@ -24,14 +25,19 @@ const OrderScreen = () => {
   const customerName = store.getState().user.user.name
   const customerEmail = store.getState().user.user.email
 
-  const { order, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.order
-  )
+  const { user: loggedInUser } = useSelector((state) => state.user)
+
+  const {
+    order,
+    updateOrderToPaidLoading,
+    updateOrderToPaidSuccess,
+    updateOrderToPaidError,
+    updateOrderToPaidMessage,
+  } = useSelector((state) => state.order)
 
   const [sdkReady, setSdkReady] = useState(false)
 
   useEffect(() => {
-    console.log('HELLO')
     dispatch(getOrderDetails(orderId))
   }, [dispatch, orderId])
 
@@ -48,8 +54,8 @@ const OrderScreen = () => {
       document.body.appendChild(script)
     }
 
-    if (isSuccess) {
-      dispatch(reset())
+    if (updateOrderToPaidSuccess) {
+      dispatch(updateOrderToPaidReset())
       dispatch(getOrderDetails(orderId))
     } else if (!order.isPaid) {
       if (!window.paypal) {
@@ -58,7 +64,7 @@ const OrderScreen = () => {
         setSdkReady(true)
       }
     }
-  }, [dispatch, orderId, isSuccess, order.isPaid])
+  }, [dispatch, orderId, updateOrderToPaidSuccess, order.isPaid])
 
   const paymentSuccessHandler = (paymentResult) => {
     const paymentData = {
@@ -68,10 +74,15 @@ const OrderScreen = () => {
     dispatch(updateOrderToPaid(paymentData))
   }
 
-  return isLoading ? (
+  const deliverHandler = () => {
+    dispatch(updateOrderToDelivered(orderId))
+    window.location.reload()
+  }
+
+  return updateOrderToPaidLoading ? (
     <Loader />
-  ) : isError ? (
-    <Message variant='danger'>{message}</Message>
+  ) : updateOrderToPaidError ? (
+    <Message variant='danger'>{updateOrderToPaidMessage}</Message>
   ) : (
     <>
       <h1>Order {orderId}</h1>
@@ -81,11 +92,13 @@ const OrderScreen = () => {
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
-                <strong>Name: </strong> {customerName}
+                <strong>Name: </strong> {order.user?.name || customerName}
               </p>
               <p>
                 <strong>Email: </strong>
-                <a href={`mailto:${customerEmail}`}>{customerEmail}</a>
+                <a href={`mailto:${order.user?.email || customerEmail}`}>
+                  {order.user?.email || customerEmail}
+                </a>
               </p>
               <p>
                 <strong>Address: </strong>
@@ -94,9 +107,9 @@ const OrderScreen = () => {
                 {order.shippingAddress?.postalCode},{' '}
                 {order.shippingAddress?.country}
               </p>
-              {order.isDelivered ? (
+              {order?.isDelivered ? (
                 <Message variant='success'>
-                  Delivered on {order.deliveredAt}
+                  Delivered on {order?.deliveredAt}
                 </Message>
               ) : (
                 <Message variant='danger'>Not Delivered</Message>
@@ -182,7 +195,7 @@ const OrderScreen = () => {
               </ListGroup.Item>
               {!order.isPaid && (
                 <ListGroup.Item>
-                  {isLoading && <Loader />}
+                  {updateOrderToPaidLoading && <Loader />}
                   {!sdkReady ? (
                     <Loader />
                   ) : (
@@ -191,6 +204,17 @@ const OrderScreen = () => {
                       onSuccess={paymentSuccessHandler}
                     />
                   )}
+                </ListGroup.Item>
+              )}
+              {loggedInUser.isAdmin && order.isPaid && !order.isDelivered && (
+                <ListGroup.Item>
+                  <Button
+                    type='button'
+                    className='btn btn-block'
+                    onClick={deliverHandler}
+                  >
+                    Mark As Delivered
+                  </Button>
                 </ListGroup.Item>
               )}
             </ListGroup>

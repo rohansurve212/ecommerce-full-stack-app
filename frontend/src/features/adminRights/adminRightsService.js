@@ -4,6 +4,7 @@ import axios from 'axios'
 
 const USERS_API_URL = '/api/users'
 const PRODUCTS_API_URL = '/api/products'
+const ORDERS_API_URL = '/api/orders'
 
 //---------------------* User-related API Endpoints *----------------------------
 
@@ -141,6 +142,40 @@ const updateProduct = async (updatedProductData, token) => {
   return response.data
 }
 
+//---------------------* Order-related API Endpoints *----------------------------
+
+//Get all orders
+const getAllOrders = async (token) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const response = await axios.get(ORDERS_API_URL, config)
+
+  return response.data
+}
+
+//Update order to delivered
+const updateOrderToDelivered = async (orderId, token) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const response = await axios.put(
+    `${ORDERS_API_URL}/${orderId}/deliver`,
+    {},
+    config
+  )
+
+  return response.data
+}
+
 const adminRightsService = {
   getAllUsers,
   deleteUser,
@@ -149,6 +184,8 @@ const adminRightsService = {
   deleteProduct,
   createProduct,
   updateProduct,
+  getAllOrders,
+  updateOrderToDelivered,
 }
 
 export default adminRightsService
