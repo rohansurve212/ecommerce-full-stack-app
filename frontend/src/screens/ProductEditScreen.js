@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Form, Button } from 'react-bootstrap'
+import axios from 'axios'
 
 import Message from '../components/Message'
 import Loader from '../components/Loader'
@@ -38,6 +39,9 @@ const ProductEditScreen = () => {
 
   const { name, price, description, image, countInStock, brand, category } =
     formData
+
+  const [uploading, setUploading] = useState(false)
+  const [uploadImageError, setUploadImageError] = useState(null)
 
   useEffect(() => {
     !loggedInUser
@@ -76,6 +80,32 @@ const ProductEditScreen = () => {
     }))
   }
 
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0]
+    const formData = new FormData()
+    formData.append('image', file)
+    setUploading(true)
+
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+
+      const { data } = await axios.post('/api/upload', formData, config)
+
+      setFormData((prevState) => ({
+        ...prevState,
+        image: data,
+      }))
+      setUploading(false)
+    } catch (error) {
+      setUploadImageError(error.message)
+      setUploading(false)
+    }
+  }
+
   const submitHandler = (e) => {
     e.preventDefault()
 
@@ -89,8 +119,6 @@ const ProductEditScreen = () => {
       brand,
       category,
     }
-
-    console.log(updatedProductData)
 
     dispatch(updateProduct(updatedProductData))
     navigate('/admin/productlist')
@@ -109,6 +137,9 @@ const ProductEditScreen = () => {
     <>
       <FormContainer>
         <h1>Edit Product</h1>
+        {uploadImageError && (
+          <Message variant='danger'>{uploadImageError}</Message>
+        )}
         {getProductDetailsError ? (
           <Message variant='danger'>{getProductDetailsMessage}</Message>
         ) : (
@@ -142,6 +173,15 @@ const ProductEditScreen = () => {
                 onChange={formDataChangeHandler}
               ></Form.Control>
             </Form.Group>
+            <h2> </h2>
+            <Form.Group controlId='formFile' className='mb-3'>
+              <Form.Control
+                type='file'
+                name='image-upload'
+                onChange={uploadFileHandler}
+              />
+            </Form.Group>
+            {uploading && <Loader />}
             <h2> </h2>
             <Form.Group controlId='brand'>
               <Form.Label>Brand</Form.Label>

@@ -89,3 +89,14 @@ export const getMyOrders = asyncHandler(async (req, res) => {
 
   res.status(201).json(orders)
 })
+
+//---------------------* ADMINISTRATOR ACCESS ONLY *----------------------------
+
+// @desc   Get all orders
+// @route  GET /api/orders
+// @access Private/Admin
+export const getAllOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({}).populate('user', 'id name')
+
+  res.status(201).json(orders)
+})
