@@ -23,10 +23,10 @@ const initialState = {
   getAllOrdersSuccess: false,
   getAllOrdersError: false,
   getAllOrdersMessage: '',
-  updateOrderToDeliveredLoading: false,
-  updateOrderToDeliveredSuccess: false,
-  updateOrderToDeliveredError: false,
-  updateOrderToDeliveredMessage: '',
+  updateOrderToShippedLoading: false,
+  updateOrderToShippedSuccess: false,
+  updateOrderToShippedError: false,
+  updateOrderToShippedMessage: '',
 }
 
 //---------------------* User-related Thunk Functions *----------------------------
@@ -187,13 +187,13 @@ export const getAllOrders = createAsyncThunk(
   }
 )
 
-//Update Order to delivered
-export const updateOrderToDelivered = createAsyncThunk(
-  'adminRights/updateOrderToDelivered',
+//Update Order to shipped
+export const updateOrderToShipped = createAsyncThunk(
+  'adminRights/updateOrderToShipped',
   async (orderId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().user.user.token
-      return await adminRightsService.updateOrderToDelivered(orderId, token)
+      return await adminRightsService.updateOrderToShipped(orderId, token)
     } catch (error) {
       const message =
         (error.response &&
@@ -223,11 +223,11 @@ export const adminRightsSlice = createSlice({
       state.createProductError = false
       state.createProductMessage = ''
     },
-    updateOrderToDeliveredReset: (state) => {
-      state.updateOrderToDeliveredLoading = false
-      state.updateOrderToDeliveredSuccess = false
-      state.updateOrderToDeliveredError = false
-      state.updateOrderToDeliveredMessage = ''
+    updateOrderToShippedReset: (state) => {
+      state.updateOrderToShippedLoading = false
+      state.updateOrderToShippedSuccess = false
+      state.updateOrderToShippedError = false
+      state.updateOrderToShippedMessage = ''
     },
   },
   extraReducers: (builder) => {
@@ -329,17 +329,17 @@ export const adminRightsSlice = createSlice({
         state.getAllOrdersError = true
         state.getAllOrdersMessage = action.payload
       })
-      .addCase(updateOrderToDelivered.pending, (state) => {
-        state.updateOrderToDeliveredLoading = true
+      .addCase(updateOrderToShipped.pending, (state) => {
+        state.updateOrderToShippedLoading = true
       })
-      .addCase(updateOrderToDelivered.fulfilled, (state, action) => {
-        state.updateOrderToDeliveredLoading = false
+      .addCase(updateOrderToShipped.fulfilled, (state, action) => {
+        state.updateOrderToShippedLoading = false
         state.order = action.payload
       })
-      .addCase(updateOrderToDelivered.rejected, (state, action) => {
-        state.updateOrderToDeliveredLoading = false
-        state.updateOrderToDeliveredError = true
-        state.updateOrderToDeliveredMessage = action.payload
+      .addCase(updateOrderToShipped.rejected, (state, action) => {
+        state.updateOrderToShippedLoading = false
+        state.updateOrderToShippedError = true
+        state.updateOrderToShippedMessage = action.payload
       })
   },
 })
@@ -347,6 +347,6 @@ export const adminRightsSlice = createSlice({
 export const {
   deleteProductReset,
   createProductReset,
-  updateOrderToDeliveredReset,
+  updateOrderToShippedReset,
 } = adminRightsSlice.actions
 export default adminRightsSlice.reducer

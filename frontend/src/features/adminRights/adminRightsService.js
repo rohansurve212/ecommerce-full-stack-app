@@ -158,8 +158,8 @@ const getAllOrders = async (token) => {
   return response.data
 }
 
-//Update order to delivered
-const updateOrderToDelivered = async (orderId, token) => {
+//Update order to shipped
+const updateOrderToShipped = async (orderId, token) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ const updateOrderToDelivered = async (orderId, token) => {
   }
 
   const response = await axios.put(
-    `${ORDERS_API_URL}/${orderId}/deliver`,
+    `${ORDERS_API_URL}/${orderId}/ship`,
     {},
     config
   )
@@ -185,7 +185,7 @@ const adminRightsService = {
   createProduct,
   updateProduct,
   getAllOrders,
-  updateOrderToDelivered,
+  updateOrderToShipped,
 }
 
 export default adminRightsService

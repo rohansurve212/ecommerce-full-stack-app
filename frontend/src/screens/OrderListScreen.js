@@ -1,8 +1,8 @@
 /** @format */
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { LinkContainer } from 'react-router-bootstrap'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Table, Button } from 'react-bootstrap'
 
 import Message from '../components/Message'
@@ -46,7 +46,7 @@ const OrderListScreen = () => {
               <th>DATE</th>
               <th>TOTAL PRICE</th>
               <th>PAID</th>
-              <th>DELIVERED</th>
+              <th>SHIPPED</th>
               <th></th>
             </tr>
           </thead>
@@ -65,8 +65,8 @@ const OrderListScreen = () => {
                   )}
                 </td>
                 <td>
-                  {order.isDelivered ? (
-                    order.deliveredAt.substring(0, 10)
+                  {order.isShipped ? (
+                    order.shippedAt.substring(0, 10)
                   ) : (
                     <i className='fas fa-times' style={{ color: 'red' }}></i>
                   )}

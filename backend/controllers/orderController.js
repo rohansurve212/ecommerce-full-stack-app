@@ -101,15 +101,15 @@ export const getAllOrders = asyncHandler(async (req, res) => {
   res.status(201).json(orders)
 })
 
-// @desc   Update order to delivered
-// @route  GET /api/orders/:id/deliver
+// @desc   Update order to shipped
+// @route  GET /api/orders/:id/ship
 // @access Private/Admin
-export const updateOrderToDelivered = asyncHandler(async (req, res) => {
+export const updateOrderToShipped = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.id)
 
   if (order) {
-    order.isDelivered = true
-    order.deliveredAt = Date.now()
+    order.isShipped = true
+    order.shippedAt = Date.now()
 
     const updatedOrder = await order.save()
 

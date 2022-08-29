@@ -13,7 +13,7 @@ import {
   updateOrderToPaid,
   updateOrderToPaidReset,
 } from '../features/order/orderSlice'
-import { updateOrderToDelivered } from '../features/adminRights/adminRightsSlice'
+import { updateOrderToShipped } from '../features/adminRights/adminRightsSlice'
 import { store } from '../app/store'
 
 const OrderScreen = () => {
@@ -74,8 +74,8 @@ const OrderScreen = () => {
     dispatch(updateOrderToPaid(paymentData))
   }
 
-  const deliverHandler = () => {
-    dispatch(updateOrderToDelivered(orderId))
+  const shippingHandler = () => {
+    dispatch(updateOrderToShipped(orderId))
     window.location.reload()
   }
 
@@ -107,12 +107,12 @@ const OrderScreen = () => {
                 {order.shippingAddress?.postalCode},{' '}
                 {order.shippingAddress?.country}
               </p>
-              {order?.isDelivered ? (
+              {order?.isShipped ? (
                 <Message variant='success'>
-                  Delivered on {order?.deliveredAt}
+                  Shipped on {order?.shippedAt}
                 </Message>
               ) : (
-                <Message variant='danger'>Not Delivered</Message>
+                <Message variant='danger'>Not Shipped</Message>
               )}
             </ListGroup.Item>
 
@@ -206,14 +206,14 @@ const OrderScreen = () => {
                   )}
                 </ListGroup.Item>
               )}
-              {loggedInUser.isAdmin && order.isPaid && !order.isDelivered && (
+              {loggedInUser?.isAdmin && order.isPaid && !order.isShipped && (
                 <ListGroup.Item>
                   <Button
                     type='button'
                     className='btn btn-block'
-                    onClick={deliverHandler}
+                    onClick={shippingHandler}
                   >
-                    Mark As Delivered
+                    Mark As Shipped
                   </Button>
                 </ListGroup.Item>
               )}
