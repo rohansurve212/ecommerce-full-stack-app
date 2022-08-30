@@ -5,10 +5,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import productReviewService from './productReviewService'
 
 const initialState = {
-  productReviewLoading: false,
-  productReviewSuccess: false,
-  productReviewError: false,
-  productReviewMessage: '',
+  createProductReviewLoading: false,
+  createProductReviewSuccess: false,
+  createProductReviewError: false,
+  createProductReviewMessage: '',
+  deleteProductReviewLoading: false,
+  deleteProductReviewSuccess: false,
+  deleteProductReviewError: false,
+  deleteProductReviewMessage: '',
 }
 
 //Create a product review
@@ -33,34 +37,73 @@ export const createProductReview = createAsyncThunk(
   }
 )
 
+//Delete a product review
+export const deleteProductReview = createAsyncThunk(
+  'productReview/deleteProductReview',
+  async (productId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().user.user.token
+      return await productReviewService.deleteProductReview(productId, token)
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
 export const productReviewSlice = createSlice({
   name: 'productReview',
   initialState,
   reducers: {
-    productReviewReset: (state) => {
-      state.productReviewLoading = false
-      state.productReviewSuccess = false
-      state.productReviewError = false
-      state.productReviewMessage = ''
+    createProductReviewReset: (state) => {
+      state.createProductReviewLoading = false
+      state.createProductReviewSuccess = false
+      state.createProductReviewError = false
+      state.createProductReviewMessage = ''
+    },
+    deleteProductReviewReset: (state) => {
+      state.deleteProductReviewLoading = false
+      state.deleteProductReviewSuccess = false
+      state.deleteProductReviewError = false
+      state.deleteProductReviewMessage = ''
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(createProductReview.pending, (state) => {
-        state.productReviewLoading = true
+        state.createProductReviewLoading = true
       })
       .addCase(createProductReview.fulfilled, (state, action) => {
-        state.productReviewLoading = false
-        state.productReviewSuccess = true
-        state.productReviewMessage = action.payload
+        state.createProductReviewLoading = false
+        state.createProductReviewSuccess = true
+        state.createProductReviewMessage = action.payload
       })
       .addCase(createProductReview.rejected, (state, action) => {
-        state.productReviewLoading = false
-        state.productReviewError = true
-        state.productReviewMessage = action.payload
+        state.createProductReviewLoading = false
+        state.createProductReviewError = true
+        state.createProductReviewMessage = action.payload
+      })
+      .addCase(deleteProductReview.pending, (state) => {
+        state.deleteProductReviewLoading = true
+      })
+      .addCase(deleteProductReview.fulfilled, (state, action) => {
+        state.deleteProductReviewLoading = false
+        state.deleteProductReviewSuccess = true
+        state.deleteProductReviewMessage = action.payload
+      })
+      .addCase(deleteProductReview.rejected, (state, action) => {
+        state.deleteProductReviewLoading = false
+        state.deleteProductReviewError = true
+        state.deleteProductReviewMessage = action.payload
       })
   },
 })
 
-export const { productReviewReset } = productReviewSlice.actions
+export const { createProductReviewReset, deleteProductReviewReset } =
+  productReviewSlice.actions
 export default productReviewSlice.reducer

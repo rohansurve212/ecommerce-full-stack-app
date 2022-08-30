@@ -63,6 +63,29 @@ export const createProductReview = asyncHandler(async (req, res) => {
   }
 })
 
+// @desc   Delete a product review
+// @route  DELETE /api/products/:id/reviews
+// @access Private
+export const deleteProductReview = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id)
+
+  if (product) {
+    try {
+      product.reviews = product.reviews.filter(
+        (r) => r.user.toString() !== req.user._id.toString()
+      )
+      await product.save()
+      res.status(200).json({ message: 'Product review removed' })
+    } catch (error) {
+      res.status(404)
+      throw new Error('Product review not found')
+    }
+  } else {
+    res.status(404)
+    throw new Error('Product not found')
+  }
+})
+
 //---------------------* ADMINISTRATOR ACCESS ONLY *----------------------------
 
 // @desc   Delete a product

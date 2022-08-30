@@ -23,8 +23,23 @@ const createProductReview = async (productReviewData, token) => {
   return response.data.message
 }
 
+//Delete a product review
+const deleteProductReview = async (productId, token) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const response = await axios.delete(`${API_URL}/${productId}/reviews`, config)
+
+  return response.data.message
+}
+
 const productReviewService = {
   createProductReview,
+  deleteProductReview,
 }
 
 export default productReviewService

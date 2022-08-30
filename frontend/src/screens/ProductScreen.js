@@ -10,7 +10,8 @@ import Message from '../components/Message'
 import { getProductDetails } from '../features/products/productListSlice'
 import {
   createProductReview,
-  productReviewReset,
+  deleteProductReview,
+  createProductReviewReset,
 } from '../features/products/productReviewSlice'
 import { addCartItem } from '../features/cart/cartSlice'
 
@@ -22,29 +23,32 @@ const ProductScreen = () => {
     (state) => state.productList
   )
 
-  const { productReviewSuccess, productReviewError, productReviewMessage } =
-    useSelector((state) => state.productReview)
+  const {
+    createProductReviewSuccess,
+    createProductReviewError,
+    createProductReviewMessage,
+  } = useSelector((state) => state.productReview)
 
   const { user: loggedInUser } = useSelector((state) => state.user)
 
-  const { id } = useParams()
+  const { id: productId } = useParams()
 
   const [quantity, setQuantity] = useState(1)
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
 
   useEffect(() => {
-    if (productReviewSuccess) {
+    if (createProductReviewSuccess) {
       setRating(0)
       setComment('')
-      dispatch(productReviewReset())
+      dispatch(createProductReviewReset())
     }
-    dispatch(getProductDetails(id))
-  }, [id, dispatch, productReviewSuccess])
+    dispatch(getProductDetails(productId))
+  }, [productId, dispatch, createProductReviewSuccess])
 
   const addToCartHandler = () => {
     const cartInput = {
-      productId: id,
+      productId,
       productQty: quantity,
     }
     dispatch(addCartItem(cartInput))
@@ -55,12 +59,17 @@ const ProductScreen = () => {
     e.preventDefault()
 
     const productReviewData = {
-      productId: id,
+      productId,
       rating,
       comment,
     }
 
     dispatch(createProductReview(productReviewData))
+  }
+
+  const deleteReviewHandler = () => {
+    dispatch(deleteProductReview(productId))
+    window.location.reload()
   }
 
   if (isLoading) {
@@ -163,18 +172,30 @@ const ProductScreen = () => {
                 {product.reviews.map((review, index) => (
                   <ListGroup.Item key={index}>
                     <strong>{review.name}</strong>
-                    <Rating value={review.rating} />
+                    <Rating value={review.rating} text='' />
                     <p>{review.createdAt.substring(0, 10)}</p>
                     <p>{review.comment}</p>
+                    {review.user === loggedInUser._id && (
+                      <Button
+                        variant='outline-dark'
+                        onClick={deleteReviewHandler}
+                      >
+                        Delete
+                      </Button>
+                    )}
                   </ListGroup.Item>
                 ))}
                 <ListGroup.Item>
                   <h2>Add a Review</h2>
-                  {productReviewError && (
-                    <Message variant='danger'>{productReviewMessage}</Message>
+                  {createProductReviewError && (
+                    <Message variant='danger'>
+                      {createProductReviewMessage}
+                    </Message>
                   )}
-                  {productReviewSuccess && (
-                    <Message variant='success'>{productReviewMessage}</Message>
+                  {createProductReviewSuccess && (
+                    <Message variant='success'>
+                      {createProductReviewMessage}
+                    </Message>
                   )}
                   {!loggedInUser ? (
                     <Message>
