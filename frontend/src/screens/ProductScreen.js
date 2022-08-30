@@ -8,10 +8,13 @@ import Rating from '../components/Rating'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
 import { getProductDetails } from '../features/products/productListSlice'
+import {
+  createProductReview,
+  productReviewReset,
+} from '../features/products/productReviewSlice'
 import { addCartItem } from '../features/cart/cartSlice'
 
 const ProductScreen = () => {
-  const [quantity, setQuantity] = useState(1)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -19,11 +22,25 @@ const ProductScreen = () => {
     (state) => state.productList
   )
 
+  const { productReviewSuccess, productReviewError, productReviewMessage } =
+    useSelector((state) => state.productReview)
+
+  const { user: loggedInUser } = useSelector((state) => state.user)
+
   const { id } = useParams()
 
+  const [quantity, setQuantity] = useState(1)
+  const [rating, setRating] = useState(0)
+  const [comment, setComment] = useState('')
+
   useEffect(() => {
+    if (productReviewSuccess) {
+      setRating(0)
+      setComment('')
+      dispatch(productReviewReset())
+    }
     dispatch(getProductDetails(id))
-  }, [id, dispatch])
+  }, [id, dispatch, productReviewSuccess])
 
   const addToCartHandler = () => {
     const cartInput = {
@@ -32,6 +49,18 @@ const ProductScreen = () => {
     }
     dispatch(addCartItem(cartInput))
     navigate(`/cart/${cartInput.productId}?qty=${cartInput.productQty}`)
+  }
+
+  const submitHandler = (e) => {
+    e.preventDefault()
+
+    const productReviewData = {
+      productId: id,
+      rating,
+      comment,
+    }
+
+    dispatch(createProductReview(productReviewData))
   }
 
   if (isLoading) {
@@ -123,6 +152,69 @@ const ProductScreen = () => {
                   </ListGroup.Item>
                 </ListGroup>
               </Card>
+            </Col>
+          </Row>
+          <h2> </h2>
+          <Row>
+            <Col md={6}>
+              <h2>Reviews</h2>
+              {product.reviews.length === 0 && <Message>No reviews</Message>}
+              <ListGroup variant='flush'>
+                {product.reviews.map((review, index) => (
+                  <ListGroup.Item key={index}>
+                    <strong>{review.name}</strong>
+                    <Rating value={review.rating} />
+                    <p>{review.createdAt.substring(0, 10)}</p>
+                    <p>{review.comment}</p>
+                  </ListGroup.Item>
+                ))}
+                <ListGroup.Item>
+                  <h2>Add a Review</h2>
+                  {productReviewError && (
+                    <Message variant='danger'>{productReviewMessage}</Message>
+                  )}
+                  {productReviewSuccess && (
+                    <Message variant='success'>{productReviewMessage}</Message>
+                  )}
+                  {!loggedInUser ? (
+                    <Message>
+                      Please <Link to='/login'>sign in</Link> to add a review
+                    </Message>
+                  ) : (
+                    <Form onSubmit={submitHandler}>
+                      <Form.Group controlId='rating'>
+                        <Form.Label>Rating</Form.Label>
+                        <Form.Control
+                          as='select'
+                          value={rating}
+                          onChange={(e) => setRating(e.target.value)}
+                        >
+                          <option value=''>Select...</option>
+                          <option value='1'>1 - Poor</option>
+                          <option value='2'>2 - Fair</option>
+                          <option value='3'>3 - Good</option>
+                          <option value='4'>4 - Very Good</option>
+                          <option value='5'>5 - Excellent</option>
+                        </Form.Control>
+                      </Form.Group>
+                      <h2> </h2>
+                      <Form.Group controlId='comment'>
+                        <Form.Label>Comment</Form.Label>
+                        <Form.Control
+                          as='textarea'
+                          row='3'
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        ></Form.Control>
+                      </Form.Group>
+                      <h2> </h2>
+                      <Button type='submit' variant='primary'>
+                        Submit
+                      </Button>
+                    </Form>
+                  )}
+                </ListGroup.Item>
+              </ListGroup>
             </Col>
           </Row>
         </>

@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import userReducer from '../features/user/userSlice'
 import productListReducer from '../features/products/productListSlice'
+import productReviewReducer from '../features/products/productReviewSlice'
 import cartReducer from '../features/cart/cartSlice'
 import orderReducer from '../features/order/orderSlice'
 import userAllOrdersReducer from '../features/userAllOrders/userAllOrdersSlice'
@@ -17,5 +18,6 @@ export const store = configureStore({
     order: orderReducer,
     userAllOrders: userAllOrdersReducer,
     adminRights: adminRightsReducer,
+    productReview: productReviewReducer,
   },
 })

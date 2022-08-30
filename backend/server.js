@@ -6,6 +6,7 @@ import connectDB from './config/db.js'
 import colors from 'colors'
 import cors from 'cors'
 import path from 'path'
+import morgan from 'morgan'
 
 import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
@@ -25,6 +26,10 @@ app.use(express.json())
 app.get('/', (req, res) => {
   res.send('API is running...')
 })
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
 
 //Mount Routes
 app.use('/api/products', productRoutes)
