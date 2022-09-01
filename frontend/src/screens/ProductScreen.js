@@ -7,6 +7,7 @@ import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap'
 import Rating from '../components/Rating'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
+import Meta from '../components/Meta'
 import { getProductDetails } from '../features/products/productListSlice'
 import {
   createProductReview,
@@ -85,6 +86,7 @@ const ProductScreen = () => {
           <Link className='btn btn-outline-dark my-3' to='/'>
             Go Back
           </Link>
+          <Meta title={product.name} />
           <Row>
             <Col md={6}>
               <Image src={product.image} alt={product.name} fluid />
