@@ -6,6 +6,8 @@ import productListService from './productListService'
 
 const initialState = {
   products: [],
+  pages: 1,
+  page: 1,
   product: { reviews: [] },
   listProductsLoading: false,
   listProductsSuccess: false,
@@ -20,9 +22,9 @@ const initialState = {
 //Get a list of all products
 export const listProducts = createAsyncThunk(
   'products/listAllProducts',
-  async (_, thunkAPI) => {
+  async ({ keyword, pageNumber }, thunkAPI) => {
     try {
-      return await productListService.listProducts()
+      return await productListService.listProducts({ keyword, pageNumber })
     } catch (error) {
       const message =
         (error.response &&
@@ -72,7 +74,9 @@ export const productListSlice = createSlice({
       .addCase(listProducts.fulfilled, (state, action) => {
         state.listProductsLoading = false
         state.listProductsSuccess = true
-        state.products = action.payload
+        state.products = action.payload.products
+        state.pages = action.payload.pages
+        state.page = action.payload.page
       })
       .addCase(listProducts.rejected, (state, action) => {
         state.listProductsLoading = false

@@ -7,9 +7,39 @@ import Product from '../models/productModel.js'
 // @route  GET /api/products
 // @access Public
 export const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({})
+  const pageSize = 10
+  const page = parseInt(req.query.pageNumber) || 1
+  const keyword = req.query.keyword
+    ? {
+        $or: [
+          {
+            name: {
+              $regex: req.query.keyword,
+              $options: 'i',
+            },
+          },
+          {
+            description: {
+              $regex: req.query.keyword,
+              $options: 'i',
+            },
+          },
+          {
+            brand: {
+              $regex: req.query.keyword,
+              $options: 'i',
+            },
+          },
+        ],
+      }
+    : {}
 
-  res.json(products)
+  const count = await Product.count({ ...keyword })
+  const products = await Product.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+
+  res.json({ products, page, pages: Math.ceil(count / pageSize) })
 })
 
 // @desc   Fetch a product by Id
@@ -83,6 +113,20 @@ export const deleteProductReview = asyncHandler(async (req, res) => {
   } else {
     res.status(404)
     throw new Error('Product not found')
+  }
+})
+
+// @desc   Get top rated products
+// @route  GET /api/products/top-rated
+// @access Public
+export const getTopRatedProducts = asyncHandler(async (req, res) => {
+  const products = await Product.find({}).sort({ rating: -1 }).limit(3)
+
+  if (products) {
+    res.status(200).json(products)
+  } else {
+    res.status(400)
+    throw new Error('Top-rated products not found')
   }
 })
 
