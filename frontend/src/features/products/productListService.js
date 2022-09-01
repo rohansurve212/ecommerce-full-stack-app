@@ -13,6 +13,13 @@ const listProducts = async ({ keyword, pageNumber }) => {
   return response.data
 }
 
+//Get top-rated products
+const getTopRatedProducts = async () => {
+  const response = await axios.get(`${API_URL}/top-rated`)
+
+  return response.data
+}
+
 //Get product details for a single product
 const getProductDetails = async (productId) => {
   const response = await axios.get(`${API_URL}/${productId}`)
@@ -23,6 +30,7 @@ const getProductDetails = async (productId) => {
 const productListService = {
   listProducts,
   getProductDetails,
+  getTopRatedProducts,
 }
 
 export default productListService

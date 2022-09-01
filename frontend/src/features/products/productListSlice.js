@@ -6,6 +6,7 @@ import productListService from './productListService'
 
 const initialState = {
   products: [],
+  topRatedProducts: [],
   pages: 1,
   page: 1,
   product: { reviews: [] },
@@ -13,6 +14,10 @@ const initialState = {
   listProductsSuccess: false,
   listProductsError: false,
   listProductsMessage: '',
+  getTopRatedProductsLoading: false,
+  getTopRatedProductsSuccess: false,
+  getTopRatedProductsError: false,
+  getTopRatedProductsMessage: '',
   getProductDetailsLoading: false,
   getProductDetailsSuccess: false,
   getProductDetailsError: false,
@@ -25,6 +30,24 @@ export const listProducts = createAsyncThunk(
   async ({ keyword, pageNumber }, thunkAPI) => {
     try {
       return await productListService.listProducts({ keyword, pageNumber })
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString()
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+//Get top-rated products
+export const getTopRatedProducts = createAsyncThunk(
+  'products/getTopRatedProducts',
+  async (_, thunkAPI) => {
+    try {
+      return await productListService.getTopRatedProducts()
     } catch (error) {
       const message =
         (error.response &&
@@ -82,6 +105,19 @@ export const productListSlice = createSlice({
         state.listProductsLoading = false
         state.listProductsError = true
         state.listProductsMessage = action.payload
+      })
+      .addCase(getTopRatedProducts.pending, (state) => {
+        state.getTopRatedProductsLoading = true
+      })
+      .addCase(getTopRatedProducts.fulfilled, (state, action) => {
+        state.getTopRatedProductsLoading = false
+        state.getTopRatedProductsSuccess = true
+        state.topRatedProducts = action.payload
+      })
+      .addCase(getTopRatedProducts.rejected, (state, action) => {
+        state.getTopRatedProductsLoading = false
+        state.getTopRatedProductsError = true
+        state.getTopRatedProductsMessage = action.payload
       })
       .addCase(getProductDetails.pending, (state) => {
         state.getProductDetailsLoading = true
