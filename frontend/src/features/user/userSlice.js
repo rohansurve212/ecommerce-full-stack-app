@@ -24,11 +24,7 @@ export const register = createAsyncThunk(
       return await userService.register(user)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -40,9 +36,7 @@ export const login = createAsyncThunk('user/login', async (user, thunkAPI) => {
     return await userService.login(user)
   } catch (error) {
     const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString()
+      error.response?.data?.message || error.message || error.toString()
     return thunkAPI.rejectWithValue(message)
   }
 })
@@ -53,9 +47,7 @@ export const logout = createAsyncThunk('user/logout', async (thunkAPI) => {
     return userService.logout()
   } catch (error) {
     const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString()
+      error.response?.data?.message || error.message || error.toString()
     return thunkAPI.rejectWithValue(message)
   }
 })
@@ -69,11 +61,7 @@ export const getUserProfile = createAsyncThunk(
       return await userService.getUserProfile(token)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -88,11 +76,7 @@ export const updateUserProfile = createAsyncThunk(
       return await userService.updateUserProfile(updatedUserData, token)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }

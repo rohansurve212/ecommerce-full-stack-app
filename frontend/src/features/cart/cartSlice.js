@@ -36,11 +36,7 @@ export const addCartItem = createAsyncThunk(
       return await cartService.addCartItem(cartInput, cartItems)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -56,11 +52,7 @@ export const removeCartItem = createAsyncThunk(
       return await cartService.removeCartItem(productId, cartItems)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -75,11 +67,7 @@ export const emptyCart = createAsyncThunk(
       return await cartService.emptyCart()
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -94,11 +82,7 @@ export const saveShippingAddress = createAsyncThunk(
       return await cartService.saveShippingAddress(addressData)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -113,11 +97,7 @@ export const removeShippingAddress = createAsyncThunk(
       return await cartService.removeShippingAddress()
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -132,11 +112,7 @@ export const savePaymentMethod = createAsyncThunk(
       return await cartService.savePaymentMethod(paymentMethod)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }

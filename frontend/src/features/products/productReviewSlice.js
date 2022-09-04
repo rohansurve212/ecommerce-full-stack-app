@@ -27,11 +27,7 @@ export const createProductReview = createAsyncThunk(
       )
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -46,11 +42,7 @@ export const deleteProductReview = createAsyncThunk(
       return await productReviewService.deleteProductReview(productId, token)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }

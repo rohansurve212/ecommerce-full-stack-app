@@ -21,11 +21,7 @@ export const getMyOrders = createAsyncThunk(
       return await userAllOrdersService.getMyOrders(token)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }

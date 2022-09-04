@@ -32,11 +32,7 @@ export const listProducts = createAsyncThunk(
       return await productListService.listProducts({ keyword, pageNumber })
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -50,11 +46,7 @@ export const getTopRatedProducts = createAsyncThunk(
       return await productListService.getTopRatedProducts()
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -68,11 +60,7 @@ export const getProductDetails = createAsyncThunk(
       return await productListService.getProductDetails(productId)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }

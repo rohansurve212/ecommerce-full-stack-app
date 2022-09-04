@@ -25,11 +25,7 @@ export const createOrder = createAsyncThunk(
       return await orderService.createOrder(orderData, token)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -44,11 +40,7 @@ export const getOrderDetails = createAsyncThunk(
       return await orderService.getOrderDetails(orderId, token)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
@@ -63,11 +55,7 @@ export const updateOrderToPaid = createAsyncThunk(
       return await orderService.updateOrderToPaid(paymentData, token)
     } catch (error) {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString()
+        error.response?.data?.message || error.message || error.toString()
       return thunkAPI.rejectWithValue(message)
     }
   }
