@@ -177,7 +177,7 @@ const ProductScreen = () => {
                     <Rating value={review.rating} text='' />
                     <p>{review.createdAt.substring(0, 10)}</p>
                     <p>{review.comment}</p>
-                    {review.user === loggedInUser._id && (
+                    {review.user === loggedInUser?._id && (
                       <Button
                         variant='outline-dark'
                         onClick={deleteReviewHandler}
