@@ -54,7 +54,7 @@ const ProductEditScreen = () => {
       name: product.name,
       price: product.price,
       description: product.description,
-      image: product.image,
+      image: product.image || '',
       countInStock: product.countInStock,
       brand: product.brand,
       category: product.category,
