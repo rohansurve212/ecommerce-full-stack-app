@@ -29,7 +29,7 @@ Also, when importing a file (not a package), be sure to add .js at the end or yo
 
 ### Env Variables
 
-Create a .env file in then root and add the following
+Create a .env file in the root and add the following
 
 ```
 NODE_ENV = development
