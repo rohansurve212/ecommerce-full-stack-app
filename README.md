@@ -1,4 +1,4 @@
-# Welcome to ShoTenGai Online Store
+# Welcome to [ShoTenGai Online Store](http://rs-shotengai.herokuapp.com/)
 
 > This is an eCommerce platform built with the MERN stack & Redux Toolkit.
 
