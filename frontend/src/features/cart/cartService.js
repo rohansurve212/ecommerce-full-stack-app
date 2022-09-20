@@ -62,7 +62,7 @@ const removeShippingAddress = async () => {
   localStorage.removeItem('shippingAddress')
 }
 
-//Save shipping Address
+//Save payment Method
 const savePaymentMethod = async (paymentMethod) => {
   localStorage.setItem('paymentMethod', JSON.stringify(paymentMethod))
 
